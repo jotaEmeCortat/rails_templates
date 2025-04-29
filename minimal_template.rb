@@ -8,7 +8,8 @@ end
 # Kill any running Spring process on macOS
 run "if uname | grep -q 'Darwin'; then pgrep spring | xargs kill -9; fi"
 
-# Add base gems to the Gemfile before the development/test group
+# Gemfile
+########################################
 inject_into_file "Gemfile", before: "group :development, :test do" do
   <<~RUBY
     # Standard Ruby library, required in Ruby 3.3+ to avoid deprecation warnings
@@ -29,16 +30,9 @@ inject_into_file "Gemfile", after: "group :development, :test do" do
   RUBY
 end
 
-# Add hotwire-livereload client script in development
-layout_file = "app/views/layouts/application.html.erb"
-if File.exist?(layout_file)
-  inject_into_file layout_file, before: "</head>" do
-    <<~ERB
-      <%# Hotwire Livereload script (only in development) %>
-      <%= hotwire_livereload_tags if Rails.env.development? %>
-    ERB
-  end
-end
+
+# Assets
+########################################
 
 # Clean default stylesheets and vendor directory
 run "rm -rf app/assets/stylesheets"
@@ -155,27 +149,19 @@ file "app/assets/stylesheets/application.scss", <<~SCSS
   @import "custom";
 SCSS
 
-
-# Bootstrap & Popper
+# Layout
 ########################################
-append_file "config/importmap.rb", <<~RUBY
-  pin "bootstrap", to: "bootstrap.min.js", preload: true
-  pin "@popperjs/core", to: "popper.js", preload: true
-RUBY
 
-append_file "config/initializers/assets.rb", <<~RUBY
-  Rails.application.config.assets.precompile += %w(bootstrap.min.js popper.js)
-RUBY
-
-append_file "app/javascript/application.js", <<~JS
-  import "@popperjs/core"
-  import "bootstrap"
-JS
-
-append_file "app/assets/config/manifest.js", <<~JS
-//= link popper.js
-//= link bootstrap.min.js
-JS
+# Add hotwire-livereload client script in development
+layout_file = "app/views/layouts/application.html.erb"
+if File.exist?(layout_file)
+  inject_into_file layout_file, before: "</head>" do
+    <<~ERB
+      <%# Hotwire Livereload script (only in development) %>
+      <%= hotwire_livereload_tags if Rails.env.development? %>
+    ERB
+  end
+end
 
 # Improve viewport meta tag for Bootstrap compatibility
 gsub_file(
@@ -184,7 +170,9 @@ gsub_file(
   '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">'
 )
 
-
+# Generators
+########################################
+#
 # Configure Rails generators to skip assets, helpers, and fixtures
 generators = <<~RUBY
   config.generators do |generate|
@@ -195,41 +183,75 @@ generators = <<~RUBY
 RUBY
 environment generators
 
+# General Config
+########################################
+
 # Add general config for Rails 7.1
 general_config = <<~RUBY
   config.action_controller.raise_on_missing_callback_actions = false if Rails.version >= "7.1.0"
 RUBY
 environment general_config
 
-# After all gems are installed
+########################################
+# After bundle
+########################################
 after_bundle do
-  # Setup DB and install simple_form with Bootstrap
-  rails_command "db:drop db:create db:migrate"
-  generate("simple_form:install", "--bootstrap")
 
-  # Add common ignores to .gitignore
-  append_file ".gitignore", <<~TXT
-    # Ignore .env file containing credentials.
-    .env*
+# Generators: db + simple form + pages controller
+########################################
 
-    # Ignore Mac and Linux file system files
-    *.swp
-    .DS_Store
-  TXT
+# Setup DB and install simple_form with Bootstrap
+rails_command "db:drop db:create db:migrate"
+generate("simple_form:install", "--bootstrap")
 
-  # Tell Rails to precompile Bootstrap and Popper assets
-  append_file "config/initializers/assets.rb", <<~RUBY
-    Rails.application.config.assets.precompile += %w(bootstrap.min.js popper.js)
-  RUBY
 
-  # Create .env file
-  run "touch '.env'"
+# Bootstrap & Popper
+########################################
+append_file "config/importmap.rb", <<~RUBY
+  pin "bootstrap", to: "bootstrap.min.js", preload: true
+  pin "@popperjs/core", to: "popper.js", preload: true
+RUBY
 
-  # Download Rubocop config file
-  run "curl -L https://raw.githubusercontent.com/lewagon/rails-templates/master/.rubocop.yml > .rubocop.yml"
+# Tell Rails to precompile Bootstrap and Popper assets
+append_file "config/initializers/assets.rb", <<~RUBY
+  Rails.application.config.assets.precompile += %w(bootstrap.min.js popper.js)
+RUBY
 
-  # Initialize Git repo and make first commit
-  git :init
-  git add: "."
-  git commit: "rails new"
+append_file "app/javascript/application.js", <<~JS
+  import "@popperjs/core"
+  import "bootstrap"
+JS
+
+append_file "app/assets/config/manifest.js", <<~JS
+  //= link popper.js
+  //= link bootstrap.min.js
+JS
+
+# Dotenv
+########################################
+run "touch '.env'"
+
+# Rubocop
+########################################
+run "curl -L https://raw.githubusercontent.com/lewagon/rails-templates/master/.rubocop.yml > .rubocop.yml"
+
+# Gitignore
+########################################
+
+# Add common ignores to .gitignore
+append_file ".gitignore", <<~TXT
+  # Ignore .env file containing credentials.
+  .env*
+
+  # Ignore Mac and Linux file system files
+  *.swp
+  .DS_Store
+TXT
+
+
+# Git
+########################################
+git :init
+git add: "."
+git commit: "rails new"
 end
