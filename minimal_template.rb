@@ -156,23 +156,26 @@ file "app/assets/stylesheets/application.scss", <<~SCSS
 SCSS
 
 
-# Update the application.js to import Bootstrap and Popper.js
+# Bootstrap & Popper
+########################################
+append_file "config/importmap.rb", <<~RUBY
+  pin "bootstrap", to: "bootstrap.min.js", preload: true
+  pin "@popperjs/core", to: "popper.js", preload: true
+RUBY
+
+append_file "config/initializers/assets.rb", <<~RUBY
+  Rails.application.config.assets.precompile += %w(bootstrap.min.js popper.js)
+RUBY
+
 append_file "app/javascript/application.js", <<~JS
   import "@popperjs/core"
   import "bootstrap"
 JS
 
-# Update the assets manifest to include the new files
 append_file "app/assets/config/manifest.js", <<~JS
-  //= link bootstrap.min.js
-  //= link popper.js
+//= link popper.js
+//= link bootstrap.min.js
 JS
-
-  # Configure importmap for Bootstrap and Popper
-  append_file "config/importmap.rb", <<~RUBY
-    pin "bootstrap", to: "bootstrap.min.js", preload: true
-    pin "@popperjs/core", to: "popper.js", preload: true
-  RUBY
 
 # Improve viewport meta tag for Bootstrap compatibility
 gsub_file(
@@ -218,7 +221,6 @@ after_bundle do
   append_file "config/initializers/assets.rb", <<~RUBY
     Rails.application.config.assets.precompile += %w(bootstrap.min.js popper.js)
   RUBY
-
 
   # Create .env file
   run "touch '.env'"
