@@ -23,11 +23,11 @@ inject_into_file "Gemfile", before: "group :development, :test do" do
 end
 
 inject_into_file "Gemfile", after: "group :development, :test do" do
-  "\n  gem \"dotenv-rails\""
-end
+  <<~RUBY
 
-inject_into_file "Gemfile", after: "group :development, :test do" do
-  "\n  gem \"hotwire-livereload\""
+    gem "dotenv-rails"
+    gem "hotwire-livereload"
+  RUBY
 end
 
 # Assets
