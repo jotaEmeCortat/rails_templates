@@ -22,11 +22,13 @@ inject_into_file "Gemfile", before: "group :development, :test do" do
   RUBY
 end
 
-# Add development/test-only gems to the Gemfile
-inject_into_file "Gemfile", after: "group :development, :test do" do "\n  gem \"dotenv-rails\""
-  "\n  gem \"hotwire-livereload\""
+inject_into_file "Gemfile", after: "group :development, :test do" do
+  "\n  gem \"dotenv-rails\""
 end
 
+inject_into_file "Gemfile", after: "group :development, :test do" do
+  "\n  gem \"hotwire-livereload\""
+end
 
 # Assets
 ########################################
