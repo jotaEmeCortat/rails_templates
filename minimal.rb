@@ -153,17 +153,6 @@ SCSS
 # Layout
 ########################################
 
-# Add hotwire-livereload client script in development
-layout_file = "app/views/layouts/application.html.erb"
-if File.exist?(layout_file)
-  inject_into_file layout_file, before: "</head>" do
-    <<~ERB
-      <%# Hotwire Livereload script (only in development) %>
-      <%= hotwire_livereload_tags if Rails.env.development? %>
-    ERB
-  end
-end
-
 # Improve viewport meta tag for Bootstrap compatibility
 gsub_file(
   "app/views/layouts/application.html.erb",
@@ -202,7 +191,6 @@ after_bundle do
   ########################################
   rails_command "db:drop db:create db:migrate"
   generate("simple_form:install", "--bootstrap")
-
 
   # Bootstrap & Popper
   ########################################
