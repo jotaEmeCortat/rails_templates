@@ -253,5 +253,5 @@ after_bundle do
   ########################################
   git :init
   git add: "."
-  git commit: "rails new"
+  git commit: "-m 'rails new'"
 end
