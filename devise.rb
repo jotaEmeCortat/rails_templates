@@ -126,9 +126,20 @@ file "app/assets/stylesheets/components/_form_legend_clear.scss", <<~SCSS
   }
 SCSS
 
+# Create components/_alert.scss for flash messages
+file "app/assets/stylesheets/components/_alert.scss", <<~SCSS
+  .alert {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 1000;
+  }
+SCSS
+
 # Create components/_index.scss
 file "app/assets/stylesheets/components/_index.scss", <<~SCSS
   @import "form_legend_clear";
+  @import "alert";
 SCSS
 
 # Create custom.scss for additional custom styles
@@ -173,8 +184,7 @@ file "app/views/shared/_navbar.html.erb", <<~HTML
 
     <% if user_signed_in? %>
       <div class="nav-item">
-        <%= button_to "Log out", destroy_user_session_path, data: {turbo_method: :delete},
-        class: "btn btn-link" %>
+        <%= link_to "Log out", destroy_user_session_path, data: {turbo_method: :delete}, class: "nav-link" %>
       </div>
     <% else %>
       <div class="nav-item">
