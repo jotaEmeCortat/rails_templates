@@ -308,14 +308,6 @@ after_bundle do
   # Generate a Devise User model
   generate("devise", "User")
 
-  # Replace the ApplicationController to include authentication
-  run "rm app/controllers/application_controller.rb"
-  file "app/controllers/application_controller.rb", <<~RUBY
-    class ApplicationController < ActionController::Base
-      before_action :authenticate_user!
-    end
-  RUBY
-
   # migrate
   rails_command "db:migrate"
 
