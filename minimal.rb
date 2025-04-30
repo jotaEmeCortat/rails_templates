@@ -10,6 +10,7 @@ run "if uname | grep -q 'Darwin'; then pgrep spring | xargs kill -9; fi"
 
 # Gemfile
 ########################################
+
 inject_into_file "Gemfile", before: "group :development, :test do" do
   <<~RUBY
     # Standard Ruby library, required in Ruby 3.3+ to avoid deprecation warnings
@@ -57,6 +58,7 @@ file "app/assets/stylesheets/config/_colors.scss", <<~SCSS
   $light-gray: #F4F4F4;
 SCSS
 
+# Create config/_fonts.scss for fonts
 file "app/assets/stylesheets/config/_fonts.scss", <<~SCSS
   // Import Google fonts
   @import url('https://fonts.googleapis.com/css?family=Nunito:400,700|Work+Sans:400,700&display=swap');
@@ -171,7 +173,7 @@ gsub_file(
 
 # Generators
 ########################################
-#
+
 # Configure Rails generators to skip assets, helpers, and fixtures
 generators = <<~RUBY
   config.generators do |generate|
@@ -185,7 +187,7 @@ environment generators
 # General Config
 ########################################
 
-# Add general config for Rails 7.1
+# Disable raising errors for missing callback actions in controllers
 general_config = <<~RUBY
   config.action_controller.raise_on_missing_callback_actions = false if Rails.version >= "7.1.0"
 RUBY
@@ -196,61 +198,60 @@ environment general_config
 ########################################
 after_bundle do
 
-# Generators: db + simple form + pages controller
-########################################
-
-# Setup DB and install simple_form with Bootstrap
-rails_command "db:drop db:create db:migrate"
-generate("simple_form:install", "--bootstrap")
+  # Generators: db + simple form
+  ########################################
+  rails_command "db:drop db:create db:migrate"
+  generate("simple_form:install", "--bootstrap")
 
 
-# Bootstrap & Popper
-########################################
-append_file "config/importmap.rb", <<~RUBY
-  pin "bootstrap", to: "bootstrap.min.js", preload: true
-  pin "@popperjs/core", to: "popper.js", preload: true
-RUBY
+  # Bootstrap & Popper
+  ########################################
 
-# Tell Rails to precompile Bootstrap and Popper assets
-append_file "config/initializers/assets.rb", <<~RUBY
-  Rails.application.config.assets.precompile += %w(bootstrap.min.js popper.js)
-RUBY
+  # Add Bootstrap and Popper.js to the importmap
+  append_file "config/importmap.rb", <<~RUBY
+    pin "bootstrap", to: "bootstrap.min.js", preload: true
+    pin "@popperjs/core", to: "popper.js", preload: true
+  RUBY
 
-append_file "app/javascript/application.js", <<~JS
-  import "@popperjs/core"
-  import "bootstrap"
-JS
+  # Configure Rails to precompile Bootstrap and Popper.js assets
+  append_file "config/initializers/assets.rb", <<~RUBY
+    Rails.application.config.assets.precompile += %w(bootstrap.min.js popper.js)
+  RUBY
 
-append_file "app/assets/config/manifest.js", <<~JS
-  //= link popper.js
-  //= link bootstrap.min.js
-JS
+  # Import Bootstrap and Popper.js in the JavaScript entry point
+  append_file "app/javascript/application.js", <<~JS
+    import "@popperjs/core"
+    import "bootstrap"
+  JS
 
-# Dotenv
-########################################
-run "touch '.env'"
+  # Add Bootstrap and Popper.js to the asset manifest
+  append_file "app/assets/config/manifest.js", <<~JS
+    //= link popper.js
+    //= link bootstrap.min.js
+  JS
 
-# Rubocop
-########################################
-run "curl -L https://raw.githubusercontent.com/lewagon/rails-templates/master/.rubocop.yml > .rubocop.yml"
+  # Dotenv
+  ########################################
+  run "touch '.env'"
 
-# Gitignore
-########################################
+  # Rubocop
+  ########################################
+  run "curl -L https://raw.githubusercontent.com/lewagon/rails-templates/master/.rubocop.yml > .rubocop.yml"
 
-# Add common ignores to .gitignore
-append_file ".gitignore", <<~TXT
-  # Ignore .env file containing credentials.
-  .env*
+  # Gitignore
+  ########################################
+  append_file ".gitignore", <<~TXT
+    # Ignore .env file containing credentials.
+    .env*
 
-  # Ignore Mac and Linux file system files
-  *.swp
-  .DS_Store
-TXT
+    # Ignore Mac and Linux file system files
+    *.swp
+    .DS_Store
+  TXT
 
-
-# Git
-########################################
-git :init
-git add: "."
-git commit: "rails new"
+  # Git
+  ########################################
+  git :init
+  git add: "."
+  git commit: "rails new"
 end
