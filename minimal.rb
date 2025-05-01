@@ -69,15 +69,32 @@ file "app/assets/stylesheets/custom.scss", <<~SCSS
 SCSS
 
 # Create application.scss to import all styles
-file "app/assets/stylesheets/application.scss", <<~SCSS
-  // External libraries
-  @import "font-awesome";
+@installing_bootstrap = yes?("Install Bootstrap?")
 
-  // Your CSS
-  @import "components/index";
-  @import "custom";
+app_scss = <<~SCSS
+  // External libraries
+  @import 'font-awesome';
 SCSS
 
+if @installing_bootstrap
+  app_scss += <<~SCSS
+    // Graphical variables
+    @import 'config/fonts';
+    @import 'config/colors';
+    @import 'config/bootstrap_variables';
+
+    // External libraries
+    @import 'bootstrap';
+  SCSS
+end
+
+app_scss += <<~SCSS
+  // Your CSS
+  @import 'components/index';
+  @import 'custom';
+SCSS
+
+file "app/assets/stylesheets/application.scss", app_scss
 
 # Generators
 ########################################

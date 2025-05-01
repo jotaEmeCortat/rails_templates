@@ -30,33 +30,33 @@ SCSS
 # Create Navbar
 file "app/views/shared/_navbar.html.erb", <<~HTML
 <div class="navbar navbar-expand-sm navbar-light">
-<div class="container-fluid">
-  <%= link_to root_path, class: "navbar-brand" do %>
-    Navbar
-  <% end %>
-
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav me-auto">
-      <li class="nav-item">
-         <%= link_to "Home", root_path, class: "nav-link" %>
-        </li>
-    </ul>
-
-    <% if user_signed_in? %>
-      <div class="nav-item">
-        <%= link_to "Log out", destroy_user_session_path, data: {turbo_method: :delete}, class: "nav-link" %>
-      </div>
-    <% else %>
-      <div class="nav-item">
-        <%= link_to "Login", new_user_session_path, class: "nav-link" %>
-      </div>
+  <div class="container-fluid">
+    <%= link_to root_path, class: "navbar-brand" do %>
+      Navbar
     <% end %>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <%= link_to "Home", root_path, class: "nav-link" %>
+          </li>
+      </ul>
+
+      <% if user_signed_in? %>
+        <div class="nav-item">
+          <%= link_to "Log out", destroy_user_session_path, data: {turbo_method: :delete}, class: "nav-link" %>
+        </div>
+      <% else %>
+        <div class="nav-item">
+          <%= link_to "Login", new_user_session_path, class: "nav-link" %>
+        </div>
+      <% end %>
+    </div>
   </div>
-</div>
 </div>
 HTML
 
