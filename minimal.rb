@@ -23,11 +23,11 @@ inject_into_file "Gemfile", before: "group :development, :test do" do
 end
 
 inject_into_file "Gemfile", after: "group :development, :test do\n" do
-  <<~RUBY
-    gem "dotenv-rails"
-    gem "hotwire-livereload"
+    <<~RUBY
+      gem "dotenv-rails"
+      gem "hotwire-livereload"
 
-  RUBY
+    RUBY
 end
 
 # Assets
@@ -142,3 +142,5 @@ after_bundle do
   git add: "."
   git commit: "-m 'rails new'"
 end
+
+say "\n🎉 Minimal setup completed successfully!"

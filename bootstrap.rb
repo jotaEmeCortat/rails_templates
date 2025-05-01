@@ -127,3 +127,5 @@ after_bundle do
     //= link bootstrap.min.js
   JS
 end
+
+say "\n🎉 Bootstrap setup completed successfully!"
