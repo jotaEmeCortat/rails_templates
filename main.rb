@@ -13,5 +13,5 @@ if yes?("Install Devise?")
   chosen_templates << "Devise"
 end
 
-say_status "\n🎉 Setup completed successfully!", :green
-say_status "👉 Chosen templates: #{chosen_templates.join(', ')}", :blue
+say "\n🎉 Setup completed successfully!", :green
+say "👉 Chosen templates: #{chosen_templates.join(', ')}", :blue

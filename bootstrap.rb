@@ -77,8 +77,7 @@ file "app/assets/stylesheets/config/_bootstrap_variables.scss", <<~SCSS
 SCSS
 
 # Import styles in application.scss
-gsub_file "app/assets/stylesheets/application.scss",
-"// [bootstrap-insert-marker]", <<~SCSS.strip
+gsub_file "app/assets/stylesheets/application.scss", "// [bootstrap-insert-marker]", <<~SCSS.strip
   // Graphical variables
   @import "config/fonts";
   @import "config/colors";
