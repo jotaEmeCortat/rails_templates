@@ -10,7 +10,6 @@ run "if uname | grep -q 'Darwin'; then pgrep spring | xargs kill -9; fi"
 
 # Gemfile
 ########################################
-
 inject_into_file "Gemfile", before: "group :development, :test do" do
   <<~RUBY
     # Standard Ruby library, required in Ruby 3.3+ to avoid deprecation warnings
@@ -110,7 +109,9 @@ after_bundle do
   # Generators: db + simple form
   ########################################
   rails_command "db:drop db:create db:migrate"
-  generate("simple_form:install", "--bootstrap")
+
+  simple_form_cmd = ENV["USE_BOOTSTRAP"] == "true" ? "--bootstrap" : ""
+  generate("simple_form:install", simple_form_cmd)
 
   # Dotenv
   ########################################

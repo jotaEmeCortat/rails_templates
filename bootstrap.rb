@@ -1,6 +1,5 @@
 # Gemfile
 ########################################
-
 inject_into_file "Gemfile", before: "group :development, :test do" do
   <<~RUBY
     gem "bootstrap", "~> 5.2"
@@ -93,13 +92,9 @@ SCSS
 ########################################
 
 # Improve viewport meta tag for Bootstrap compatibility
-gsub_file(
-  "app/views/layouts/application.html.erb",
-  '<meta name="viewport" content="width=device-width,initial-scale=1">',
-  '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">'
-)
-
-
+gsub_file "app/views/layouts/application.html.erb",
+          /<meta name="viewport".*?>/,
+          '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">'
 
 ########################################
 # After bundle

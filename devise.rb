@@ -1,5 +1,7 @@
 # Gemfile
 ########################################
+
+create_file "Gemfile" unless File.exist?("Gemfile")
 inject_into_file "Gemfile", before: "group :development, :test do" do
   <<~RUBY
     gem "devise"
